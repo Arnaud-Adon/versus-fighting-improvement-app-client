@@ -7,7 +7,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --config jest.config.js --watch"
+    "test": "jest --config jest.config.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^10.2.0",
