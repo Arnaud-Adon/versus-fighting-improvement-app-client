@@ -1,35 +1,62 @@
 import React from "react";
-import { render } from "@testing-library/react-native";
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import LoginScreen from "./LoginScreen";
 
-import { createStackNavigator } from "@react-navigation/stack";
-const Stack = createStackNavigator();
+const mockNavigate = jest.fn();
 
-jest.mock("react-native/Libraries/Animated/src/NativeAnimatedHelper");
+jest.mock("@react-navigation/native", () => {
+  return {
+    ...jest.requireActual("@react-navigation/native"),
+    useNavigation: () => ({
+      navigate: mockNavigate,
+    }),
+  };
+});
 
 describe("LoginScreen test suite", () => {
-  it("should return the title on the screen", () => {
-    const { getByText } = render(<LoginScreen />);
-
-    const screenTitle = getByText(/Bienvenue sur Improve Versus Fighting/);
-
-    expect(screenTitle).toBeTruthy();
+  it("Should render correctly", () => {
+    const { getByTestId } = render(<LoginScreen />);
+    expect(getByTestId("login-screen")).toBeTruthy();
   });
 
-  it("should have button Signup on the screen", () => {
-    const { getByText } = render(<LoginScreen />);
-
-    const signUpButton = getByText(/S'incrire/);
-
-    expect(signUpButton).toBeTruthy();
+  it("Should display a image on login screen", () => {
+    const { getByTestId } = render(<LoginScreen />);
+    expect(getByTestId("login-screen-image")).toBeTruthy();
   });
 
-  it("should have button Signin on the screen", () => {
-    const { getByText } = render(<LoginScreen />);
+  it("should display title on the screen", () => {
+    const { getByTestId } = render(<LoginScreen />);
+    const title = getByTestId("login-screen-title");
+    expect(title).toBeTruthy();
+  });
 
-    const signInButton = getByText(/Se connecter/);
+  it("should display button Signup on login screen", () => {
+    const { getByTestId, getByText } = render(<LoginScreen />);
+    const button = getByTestId("signup-button");
+    const title = getByText(/S'incrire/);
+    expect(button).toBeTruthy();
+    expect(button).toContainElement(title);
+  });
 
-    expect(signInButton).toBeTruthy();
-    expect().toMatchObject;
+  it("should display button Signin on login screen", () => {
+    const { getByTestId, getByText } = render(<LoginScreen />);
+    const button = getByTestId("signin-button");
+    const title = getByText(/Se connecter/);
+    expect(button).toBeTruthy();
+    expect(button).toContainElement(title);
+  });
+
+  it("Should navigate to signup screen", () => {
+    const { getByTestId } = render(<LoginScreen />);
+    const button = getByTestId("signup-button");
+    fireEvent.press(button);
+    expect(mockNavigate).toHaveBeenCalled();
+  });
+
+  it("Should navigate to signin screen", () => {
+    const { getByTestId } = render(<LoginScreen />);
+    const button = getByTestId("signin-button");
+    fireEvent.press(button);
+    expect(mockNavigate).toHaveBeenCalled();
   });
 });
