@@ -1,50 +1,77 @@
-import React from "react";
-import { render, fireEvent, act } from "@testing-library/react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useEffect } from "react";
+import { View } from "react-native";
+import { cleanup, render, waitFor } from "@testing-library/react-native";
 import AppNavigator from "./AppNavigator";
-import { Provider } from "react-redux";
-import { store } from "../lib/state/store";
+import LoginScreen from "../screens/LoginScreen";
+import SignupScreen from "../screens/SignupScreen";
+import SigninScreen from "../screens/SigninScreen";
+import ImproveScreen from "../screens/ImproveScreen";
+import { useNavigation } from "@react-navigation/native";
 
-jest.useFakeTimers();
+jest.mock("../screens/LoginScreen", () => jest.fn());
+jest.mock("../screens/SignupScreen", () => jest.fn());
+jest.mock("../screens/SigninScreen", () => jest.fn());
+jest.mock("../screens/ImproveScreen", () => jest.fn());
+jest.mock("react-redux", () => {
+  return {
+    ...jest.requireActual("react-redux"),
+    useDispatch: () => null,
+  };
+});
 
 describe("AppNavigator test suite", () => {
-  it("should redirect to Signup from Login", async () => {
-    const getWrapper = ({ children }) => (
-      <Provider store={store}>
-        <NavigationContainer>{children}</NavigationContainer>
-      </Provider>
-    );
-
-    const { getByText } = render(<AppNavigator />, {
-      wrapper: getWrapper,
-    });
-
-    await act(async () => {
-      const signUpScreenButton = await getByText(/S'incrire/);
-      fireEvent(signUpScreenButton, "press");
-    });
-
-    const signUpScreenTitle = await getByText(/Inscription/);
-    expect(signUpScreenTitle).toBeTruthy();
+  it("Should render LoginScreen as default", () => {
+    LoginScreen.mockReturnValueOnce(<View testID="mock-login-screen" />);
+    const { getByTestId } = render(<AppNavigator />);
+    expect(getByTestId("mock-login-screen")).toBeTruthy();
   });
 
-  it("should redirect to SignIn from Login", async () => {
-    const getWrapper = ({ children }) => (
-      <Provider store={store}>
-        <NavigationContainer>{children}</NavigationContainer>
-      </Provider>
+  it("Should render SignupScreen on Signup route", async () => {
+    LoginScreen.mockImplementationOnce(() => {
+      const navigation = useNavigation();
+      useEffect(() => {
+        navigation.navigate("Signup");
+      }, [navigation]);
+      return null;
+    });
+
+    SignupScreen.mockReturnValueOnce(<View testID="mock-signup-screen" />);
+    const { getByTestId } = render(<AppNavigator />);
+
+    await waitFor(() => expect(getByTestId("mock-signup-screen")).toBeTruthy());
+  });
+
+  it("Should render SigninScreen on Signin route", async () => {
+    LoginScreen.mockImplementationOnce(() => {
+      const navigation = useNavigation();
+      useEffect(() => {
+        navigation.navigate("Signin");
+      }, [navigation]);
+
+      return null;
+    });
+
+    SigninScreen.mockReturnValueOnce(<View testID="mock-signin-screen" />);
+    const { getByTestId } = render(<AppNavigator />);
+
+    await waitFor(() => expect(getByTestId("mock-signin-screen")).toBeTruthy());
+  });
+
+  it("Should render ImproveScreen on Improve route", async () => {
+    LoginScreen.mockImplementationOnce(() => {
+      const navigation = useNavigation();
+      useEffect(() => {
+        navigation.navigate("Improve");
+      }, [navigation]);
+
+      return null;
+    });
+
+    ImproveScreen.mockReturnValueOnce(<View testID="mock-improve-screen" />);
+
+    const { getByTestId } = render(<AppNavigator />);
+    await waitFor(() =>
+      expect(getByTestId("mock-improve-screen")).toBeTruthy()
     );
-
-    const { getByText } = render(<AppNavigator />, {
-      wrapper: getWrapper,
-    });
-
-    await act(async () => {
-      const signInScreenButton = await getByText(/Se connecter/);
-      fireEvent(signInScreenButton, "press");
-    });
-
-    const signInScreenTitle = await getByText(/Connexion/);
-    expect(signInScreenTitle).toBeTruthy();
   });
 });

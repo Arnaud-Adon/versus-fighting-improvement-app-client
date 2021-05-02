@@ -1,6 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 
 import LoginScreen from "../screens/LoginScreen";
 import ImproveScreen from "../screens/ImproveScreen";
@@ -15,6 +16,8 @@ import Logout from "../components/Sign/Logout";
 import { PREFIX } from "../lib/utils/helper/contants";
 import { Ionicons } from "@expo/vector-icons";
 import { Button } from "react-native";
+import { navigationRef } from "../lib/utils/navigation/rootNavigation";
+import { Colors } from "../lib/utils/colors";
 
 const Stack = createStackNavigator();
 
@@ -58,40 +61,51 @@ const ImproveTabsScreen = () => {
 };
 
 const AppNavigator = () => {
-  const initialScreen = "Login";
-
   return (
-    <Stack.Navigator
-      initialRouteName={initialScreen}
-      screenOptions={({ route, navigation }) => ({
-        headerTitle: false,
-        headerLeft: () => {
-          if (route.name === "Signup" || route.name === "Signin") {
-            return (
-              <Button onPress={() => navigation.goBack()} title="Retour" />
-            );
-          } else {
-            return false;
-          }
-        },
-        headerRight: () => {
-          if (
-            route.name === "Improve" ||
-            route.name === "Stat" ||
-            route.name === "Video" ||
-            route.name === "Setting"
-          ) {
-            return <Logout />;
-          }
-        },
-      })}
-    >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="Signin" component={SigninScreen} />
-      <Stack.Screen name="SelectCharacter" component={SelectCharacterScreen} />
-      <Stack.Screen name="Improve" component={ImproveTabsScreen} />
-    </Stack.Navigator>
+    <NavigationContainer ref={navigationRef}>
+      <Stack.Navigator
+        initialRouteName={"Login"}
+        screenOptions={({ route, navigation }) => ({
+          headerTitle: false,
+          headerLeft: () => {
+            if (route.name === "Signup" || route.name === "Signin") {
+              return (
+                <Button onPress={() => navigation.goBack()} title="Retour" />
+              );
+            } else {
+              return false;
+            }
+          },
+          headerRight: () => {
+            if (
+              route.name === "Improve" ||
+              route.name === "Stat" ||
+              route.name === "Video" ||
+              route.name === "Setting"
+            ) {
+              return <Logout />;
+            }
+          },
+        })}
+      >
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Signup"
+          component={SignupScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="Signin" component={SigninScreen} />
+        <Stack.Screen
+          name="SelectCharacter"
+          component={SelectCharacterScreen}
+        />
+        <Stack.Screen name="Improve" component={ImproveTabsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
