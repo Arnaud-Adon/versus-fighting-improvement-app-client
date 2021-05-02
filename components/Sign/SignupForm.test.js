@@ -1,73 +1,75 @@
 import React from "react";
-import { Provider } from "react-redux";
-import { store } from "../../lib/state/store";
-import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import SignupForm from "./SignupForm";
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
+import { useNavigation } from "@react-navigation/native";
+import SignupScreen from "../../screens/SignupScreen";
+
+const mockGoBack = jest.fn();
+
+jest.mock("@react-navigation/native", () => {
+  return {
+    ...jest.requireActual("@react-navigation/native"),
+    useNavigation: () => ({
+      goBack: mockGoBack,
+    }),
+  };
+});
 
 describe("SignupForm Test suite", () => {
-  it("should render SignupForm component", () => {
-    const getWrapper = ({ children }) => (
-      <Provider store={store}>{children}</Provider>
-    );
-    const SignupFormComponent = render(<SignupForm />, { wrapper: getWrapper });
-
-    expect(SignupFormComponent).toBeTruthy();
+  it("Should render SignupForm Correctly", () => {
+    const { getByTestId } = render(<SignupScreen />);
+    expect(getByTestId("signup-form")).toBeTruthy();
   });
 
-  it("should return all register input and submit button", () => {
-    const getWrapper = ({ children }) => (
-      <Provider store={store}>{children}</Provider>
-    );
-    const { getByTestId } = render(<SignupForm />, {
-      wrapper: getWrapper,
+  it("Should go back when button Retour clicked", () => {
+    const { getByText } = render(<SignupScreen />);
+    const button = getByText(/Retour/);
+    fireEvent.press(button);
+    expect(mockGoBack).toHaveBeenCalled();
+  });
+
+  describe("form field", () => {
+    it("Should display error when confirmPassword field is not equal to password field", () => {
+      const { getByTestId, findByText } = render(<SignupScreen />);
+      const password = getByTestId("password");
+      const confirmPassword = getByTestId("confirmPassword");
+      fireEvent.changeText(password, "mock-password");
+      fireEvent.changeText(confirmPassword, "mock-another-password");
+
+      return expect(
+        findByText("les mots de passe ne sont pas identiques")
+      ).resolves.toBeTruthy();
+    });
+    it("Should not display error when there are same password between password and confirmPassword", () => {
+      const { getByTestId, findByText } = render(<SignupScreen />);
+      const password = getByTestId("password");
+      const confirmPassword = getByTestId("confirmPassword");
+      fireEvent.changeText(password, "mock-password");
+      fireEvent.changeText(confirmPassword, "mock-password");
+      return expect(
+        findByText("les mots de passe ne sont pas identiques")
+      ).rejects.toThrow();
     });
 
-    const pseudoInput = getByTestId(/pseudo-input/);
-    const emailInput = getByTestId(/email-input/);
-    const birthdayInput = getByTestId(/birthday-input/);
-    const countryInput = getByTestId(/country-input/);
-    const passwordInput = getByTestId(/password-input/);
-    const confirmPasswordInput = getByTestId(/confirmPassword-input/);
-    const submitButton = getByTestId(/submit-button/);
+    it("Should not display button when one only field is not empty", () => {
+      const { getByTestId } = render(<SignupScreen />);
+      const field = getByTestId("username");
+      const button = getByTestId("submit");
+      fireEvent.changeText(field, "mock-username");
+      expect(button).toBeDisabled();
+    });
 
-    expect(pseudoInput).toBeTruthy();
-    expect(emailInput).toBeTruthy();
-    expect(birthdayInput).toBeTruthy();
-    expect(countryInput).toBeTruthy();
-    expect(passwordInput).toBeTruthy();
-    expect(confirmPasswordInput).toBeTruthy();
-    expect(submitButton).toBeTruthy();
-  });
-});
+    it("Should display button not disabled when all fields are complete", () => {
+      const { getByTestId } = render(<SignupScreen />);
+      const username = getByTestId("username");
+      const email = getByTestId("email");
+      const password = getByTestId("password");
+      const confirmPassword = getByTestId("confirmPassword");
+      fireEvent.changeText(username, "mock-username");
+      fireEvent.changeText(email, "mock-email");
+      fireEvent.changeText(password, "mock-password");
+      fireEvent.changeText(confirmPassword, "mock-password");
 
-it("should return 6 for input number ", () => {
-  const getWrapper = ({ children }) => (
-    <Provider store={store}>{children}</Provider>
-  );
-  const { getAllByTestId } = render(<SignupForm />, {
-    wrapper: getWrapper,
-  });
-
-  const textInput = getAllByTestId(/-input/);
-
-  expect(textInput.length).toEqual(6);
-});
-
-it("should return a error when button is push and a input is empty", async () => {
-  const getWrapper = ({ children }) => (
-    <Provider store={store}>{children}</Provider>
-  );
-
-  const { getAllByTestId, getByTestId } = render(<SignupForm />, {
-    wrapper: getWrapper,
-  });
-
-  const button = getByTestId("submit-button");
-
-  fireEvent.press(button);
-
-  await waitFor(() => {
-    const errors = getAllByTestId("error");
-    expect(errors.length).toBeGreaterThanOrEqual(1);
+      expect(getByTestId("submit")).not.toBeDisabled();
+    });
   });
 });

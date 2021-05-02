@@ -5,11 +5,9 @@ import GoogleAuthForm from "../components/Sign/GoogleAuthForm";
 import Error from "../components/Error/Error";
 
 const SigninScreen = () => {
-  const { container, titleStyle } = styles;
-
   return (
-    <View style={container}>
-      <Text style={titleStyle}>Connexion</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Connexion</Text>
       <SigninForm />
       <GoogleAuthForm />
       <Error />
@@ -26,7 +24,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  titleStyle: {
+  title: {
     fontSize: 30,
     fontWeight: "600",
     lineHeight: 50,

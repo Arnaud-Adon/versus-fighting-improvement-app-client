@@ -1,216 +1,171 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
   TouchableNativeFeedback,
 } from "react-native";
-import { useDispatch } from "react-redux";
-import { Picker, PickerIOS } from "@react-native-community/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { LinearGradient } from "expo-linear-gradient";
+
+import Constants from "expo-constants";
 import { Ionicons } from "@expo/vector-icons";
-import { countries } from "../../lib/utils/country/countriesList";
-import { register } from "../../lib/state/actions";
 import { PREFIX } from "../../lib/utils/helper/contants";
-import { useEffect, useState } from "react/cjs/react.development";
+import { countries } from "../../lib/utils/country/countriesList";
+import { Colors } from "../../lib/utils/colors";
+
+import { register } from "../../lib/state/actions";
+import { useDispatch } from "react-redux";
 import { useForm } from "../../lib/hooks/useForm";
+import { useNavigation } from "@react-navigation/native";
+import { Input, DateInput, PickerInput } from "../Input/Input";
+import Button from "../Button/Button";
+
+const BackButton = ({ label, onPress }) => {
+  return (
+    <TouchableOpacity style={styles.back} onPress={onPress}>
+      <Text style={styles.backText}>{label}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const EyePassword = ({ onPress }) => {
+  return (
+    <TouchableNativeFeedback onPress={onPress} di>
+      <Ionicons style={styles.eye} name={`${PREFIX}-eye`} />
+    </TouchableNativeFeedback>
+  );
+};
+
+const Error = ({ isVisible, label }) => {
+  return isVisible && <Text style={styles.error}>{label}</Text>;
+};
 
 const { width } = Dimensions.get("window");
 
 const defaultValues = {
-  pseudo: "",
+  username: "",
   email: "",
   birthdayDate: new Date(),
   country: countries[0].name,
   password: "",
-  comfirmPassword: "",
+  confirmPassword: "",
 };
 
 const SignupForm = () => {
-  const {
-    container,
-    title,
-    buttonStyle,
-    inputStyle,
-    birthday_container,
-    dateStyle,
-    countryStyle,
-    errorInput,
-    eyeStyle,
-  } = styles;
-
-  const dispatch = useDispatch();
   const {
     formValues,
     errors,
     secure,
     setSecure,
     isValid,
-    handleChange,
+    passwordIsValid,
     validate,
+    handleChange,
+    register,
   } = useForm(defaultValues);
+
+  const navigation = useNavigation();
+
+  const goBack = () => {
+    navigation.goBack();
+  };
 
   const showPassword = () => {
     setSecure(!secure);
   };
 
-  const onSubmit = () => {
-    // dispatch(register());
-  };
+  const onSubmit = () => {};
 
   useEffect(() => {
-    // console.log("validate");
-    validate();
+    register(defaultValues);
+  }, []);
+
+  useEffect(() => {
+    validate(formValues);
   }, [formValues]);
 
-  //   useEffect(() => {
-  //     //   validate(defaultValues);
-  //   }, []);
-
-  // console.log("errors", errors);
-  // console.log("formValues", formValues);
-  // console.log("isValid", isValid);
-
   return (
-    <ScrollView>
-      <View style={container}>
-        <Text style={title}>Inscription</Text>
+    <LinearGradient colors={[Colors.LIGHTER_RED, Colors.DARKER_RED]}>
+      <View testID="signup-form" style={styles.container}>
+        <BackButton label="Retour" onPress={goBack} />
+        <Text style={styles.title}>Inscription</Text>
         <View>
-          <Text>Pseudo:</Text>
-          <TextInput
-            style={inputStyle}
-            onChangeText={(value) => handleChange("pseudo", value)}
-            testID="pseudo-input"
+          <Text style={styles.label}>Pseudo:</Text>
+          <Input
+            testID="username"
+            style={styles.input}
+            onChangeText={() => handleChange("username")}
           />
-
-          {errors.username && (
-            <Text style={errorInput} testID="error">
-              Votre pseudo est requis.
-            </Text>
-          )}
         </View>
-
         <View>
-          <Text>email:</Text>
-
-          <TextInput
-            style={inputStyle}
-            onChangeText={(value) => handleChange("email", value)}
-            testID="email-input"
+          <Text style={styles.label}>email:</Text>
+          <Input
+            testID="email"
+            style={styles.input}
+            onChangeText={() => handleChange("email")}
           />
-          {errors.email && (
-            <Text style={errorInput} testID="error">
-              Votre email est requis.
-            </Text>
-          )}
         </View>
-
-        <View style={birthday_container}>
-          <Text>Date de naissance:</Text>
-          <DateTimePicker
-            style={dateStyle}
-            testID="dateTimePicker"
-            mode={"date"}
-            is24Hour={true}
-            display="clock"
-            onChange={(event, value) => handleChange("birthdayDate", value)}
+        <View style={styles.birthdayContainer}>
+          <Text style={styles.label}>Date de naissance:</Text>
+          <DateInput
+            testID="birthday"
+            style={styles.date}
+            onChange={() => handleChange("birthdayDate")}
             value={formValues.birthdayDate ?? defaultValues.birthdayDate}
-            testID="birthday-input"
           />
         </View>
-
-        <View style={countryStyle}>
-          <Text>Votre pays:</Text>
-          {PREFIX === "ios" ? (
-            <PickerIOS
-              selectedValue={formValues.country ?? defaultValues.country}
-              style={{ height: 200, width: 100, color: "#000" }}
-              onValueChange={(itemValue, itemIndex) =>
-                handleChange("country", itemValue)
-              }
-              mode={"dialog"}
-              testID="country-input"
-            >
-              {countries.length > 0 &&
-                countries.map((country, index) => {
-                  const { name } = country;
-                  return (
-                    <PickerIOS.Item key={index} label={name} value={name} />
-                  );
-                })}
-            </PickerIOS>
-          ) : (
-            <Picker
-              selectedValue={formValues.country ?? defaultValues.country}
-              style={{ height: 200, width: 100, color: "#000" }}
-              onValueChange={(itemValue, itemIndex) =>
-                handleChange("country", itemValue)
-              }
-              mode={"dialog"}
-              testID="country-input"
-            >
-              {countries.length > 0 &&
-                countries.map((country, index) => {
-                  const { name } = country;
-                  return (
-                    <PickerIOS.Item key={index} label={name} value={name} />
-                  );
-                })}
-            </Picker>
-          )}
+        <View style={styles.country}>
+          <Text style={styles.label}>Votre pays:</Text>
+          <PickerInput
+            testID="country"
+            device={PREFIX}
+            countries={countries}
+            selectedValue={formValues.country ?? defaultValues.country}
+            style={styles.picker}
+            onChange={() => handleChange("country")}
+          />
         </View>
-
         <View>
-          <Text>Mot de passe:</Text>
+          <Text style={styles.label}>Mot de passe:</Text>
           <View>
-            <TextInput
-              style={inputStyle}
-              onChangeText={(value) => handleChange("password", value)}
+            <Input
+              testID="password"
               secureTextEntry={secure}
-              testID="password-input"
+              style={styles.input}
+              onChangeText={() => handleChange("password")}
             />
-            <TouchableNativeFeedback onPress={showPassword}>
-              <Ionicons style={eyeStyle} name={`${PREFIX}-eye`} />
-            </TouchableNativeFeedback>
+            <EyePassword onPress={showPassword} />
           </View>
-          {errors.password && (
-            <Text style={errorInput} testID="error">
-              Veuillez choisir un mot de passe.
-            </Text>
-          )}
         </View>
-
         <View>
-          <Text>Confirmation mot de passe:</Text>
+          <Text style={styles.label}>Confirmation mot de passe:</Text>
           <View>
-            <TextInput
-              style={inputStyle}
-              onChangeText={(value) => handleChange("comfirmPassword", value)}
+            <Input
+              testID="confirmPassword"
               secureTextEntry={secure}
-              testID="confirmPassword-input"
+              style={styles.input}
+              onChangeText={() => handleChange("confirmPassword")}
             />
-            <TouchableNativeFeedback onPress={showPassword}>
-              <Ionicons style={eyeStyle} name={`${PREFIX}-eye`} />
-            </TouchableNativeFeedback>
+            <EyePassword onPress={showPassword} />
           </View>
-          {errors.confirmPassword && (
-            <Text style={errorInput} testID="error">
-              Veuillez choisir un mot de passe.
-            </Text>
-          )}
+          <Error
+            isVisible={passwordIsValid}
+            label="les mots de passe ne sont pas identiques"
+          />
         </View>
-
-        <TouchableOpacity>
-          <Text style={buttonStyle} onPress={onSubmit} testID="submit-button">
-            Valider
-          </Text>
-        </TouchableOpacity>
+        <Button
+          testID="submit"
+          onPress={onSubmit}
+          label="Confirmer"
+          firstColor={Colors.LIGHTER_BLUE}
+          secondColor={Colors.LIGHTER_BLUE}
+          style={[styles.button, !isValid && styles.disabledButton]}
+          disabled={!isValid}
+        />
       </View>
-    </ScrollView>
+    </LinearGradient>
   );
 };
 
@@ -218,7 +173,8 @@ export default SignupForm;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: "100%",
+    paddingTop: Constants.statusBarHeight,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
@@ -227,45 +183,61 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "700",
     lineHeight: 30,
+    color: Colors.WHITE,
   },
-  inputStyle: {
+  label: {
+    color: Colors.WHITE,
+  },
+  input: {
     marginTop: 10,
     marginBottom: 10,
     borderWidth: 1,
+    borderColor: Colors.WHITE,
+    borderRadius: 10,
     width: width - 80,
     height: 37,
+    color: Colors.WHITE,
   },
-  buttonStyle: {
-    margin: 15,
-    backgroundColor: "blue",
+  button: {
     width: width - 80,
-    height: 30,
-    textAlign: "center",
-    lineHeight: 30,
-    color: "#fff",
+    borderRadius: 10,
   },
-  birthday_container: {
+  disabledButton: {
+    opacity: 0.3,
+  },
+  birthdayContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-  dateStyle: {
+  date: {
     margin: 10,
     width: 130,
     height: 70,
   },
-  countryStyle: {
+  picker: {
+    height: 180,
+    width: 100,
+    color: Colors.BLACK,
+  },
+  country: {
     width: width - 80,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
   },
-  errorInput: {
-    color: "red",
-  },
-  eyeStyle: {
+  eye: {
     position: "absolute",
     fontSize: 24,
     top: 15,
     right: 10,
+  },
+  back: {
+    position: "absolute",
+    top: 60,
+    left: 20,
+  },
+  backText: {
+    fontSize: 20,
+    color: Colors.WHITE,
   },
 });

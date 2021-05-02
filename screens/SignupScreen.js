@@ -1,16 +1,10 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import SignupForm from "../components/Sign/SignupForm";
+import { useNavigation } from "@react-navigation/native";
 
-const SignupScreen = ({ navigation }) => {
-  const { isLogged } = useSelector((state) => state.authentification);
-
-  useEffect(() => {
-    if (isLogged) {
-      navigation.navigate("SelectCharacter");
-    }
-  });
-
+const SignupScreen = () => {
+  const navigation = useNavigation();
   return <SignupForm />;
 };
 
