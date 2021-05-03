@@ -1,84 +1,84 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
-  TouchableOpacity,
   View,
   Text,
-  TextInput,
   TouchableNativeFeedback,
   Dimensions,
 } from "react-native";
-import { useForm, Controller } from "react-hook-form";
 import { Ionicons } from "@expo/vector-icons";
+import { Input } from "../Input/Input";
+import { useForm } from "../../lib/hooks/useForm";
 import { PREFIX } from "../../lib/utils/helper/contants";
-import { signinUser } from "../../lib/state/actions";
+import Button from "../Button/Button";
+import { Colors } from "../../lib/utils/colors";
 
 const { width } = Dimensions.get("window");
 
-const SigninForm = (props) => {
-  const dispatch = useDispatch();
-  const { control, handleSubmit, errors } = useForm();
-  const { container, inputStyle, buttonStyle, errorInput, eyeStyle } = styles;
-  const { signinUser } = props;
-  const [secure, setSecure] = useState(true);
+const defaultValues = {
+  username: "",
+  password: "",
+};
+
+const EyePassword = ({ onPress }) => {
+  return (
+    <TouchableNativeFeedback onPress={onPress}>
+      <Ionicons style={styles.eye} name={`${PREFIX}-eye`} />
+    </TouchableNativeFeedback>
+  );
+};
+
+const SigninForm = () => {
+  const {
+    formValues,
+    handleChange,
+    register,
+    validate,
+    isValid,
+    secure,
+    setSecure,
+  } = useForm();
 
   const showPassword = () => {
     setSecure(!secure);
   };
 
-  const onSubmit = (data) => {
-    dispatch(signinUser(data));
-  };
+  const onSubmit = (data) => {};
+
+  useEffect(() => register(defaultValues), []);
+
+  useEffect(() => validate(formValues), [formValues]);
 
   return (
-    <View style={container}>
-      <Text>Pseudo:</Text>
-      <Controller
-        control={control}
-        render={({ onChange, onBlur, value }) => (
-          <TextInput
-            style={inputStyle}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
-        )}
-        name="username"
-        rules={{ required: true }}
-        defaultValue=""
+    <View testID="signin-form" style={styles.container}>
+      <View>
+        <Text style={styles.label}>Pseudo:</Text>
+        <Input
+          testID="username"
+          onChangeText={() => handleChange("username")}
+          style={styles.input}
+        />
+      </View>
+      <View>
+        <Text style={styles.label}>Mot de passe:</Text>
+        <Input
+          testID="password"
+          secureTextEntry={secure}
+          onChangeText={() => handleChange("password")}
+          style={styles.input}
+          se
+        />
+        <EyePassword onPress={showPassword} />
+      </View>
+      <Button
+        testID="submit"
+        label="Valider"
+        onPress={onSubmit}
+        firstColor={Colors.DARKER_RED}
+        secondColor={Colors.DARKER_RED}
+        style={[styles.button, !isValid && styles.disabledButton]}
+        disabled={!isValid}
       />
-      {errors.username && (
-        <Text style={errorInput}>Votre pseudo est requis.</Text>
-      )}
-      <Text>Mot de passe:</Text>
-      <Controller
-        control={control}
-        render={({ onChange, onBlur, value }) => (
-          <View>
-            <TextInput
-              style={inputStyle}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              secureTextEntry={secure}
-              value={value}
-            />
-            <TouchableNativeFeedback onPress={showPassword}>
-              <Ionicons style={eyeStyle} name={`${PREFIX}-eye`} />
-            </TouchableNativeFeedback>
-          </View>
-        )}
-        name="password"
-        rules={{ required: true }}
-        defaultValue=""
-      />
-      {errors.password && (
-        <Text style={errorInput}>Votre mot de passe est requis.</Text>
-      )}
-
-      <TouchableOpacity onPress={handleSubmit(onSubmit)}>
-        <Text style={buttonStyle}>Valider</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -86,29 +86,38 @@ const SigninForm = (props) => {
 export default SigninForm;
 
 const styles = StyleSheet.create({
-  inputStyle: {
-    marginVertical: 10,
-    width: width - 80,
-    height: 37,
+  container: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  label: {
+    color: Colors.WHITE,
+  },
+  input: {
+    marginTop: 10,
+    marginBottom: 10,
     borderWidth: 1,
-  },
-  buttonStyle: {
-    marginVertical: 20,
+    borderColor: Colors.WHITE,
+    borderRadius: 10,
     width: width - 80,
     height: 37,
-    backgroundColor: "blue",
-    textAlign: "center",
-    lineHeight: 30,
-    color: "#fff",
+    color: Colors.WHITE,
   },
-  errorInput: {
+  button: {
+    width: width - 80,
+    borderRadius: 10,
+  },
+  disabledButton: {
+    opacity: 0.3,
+  },
+  error: {
     color: "red",
   },
-  eyeStyle: {
+  eye: {
     position: "absolute",
-    top: 15,
-    right: 20,
-    fontSize: 26,
-    color: "black",
+    fontSize: 24,
+    top: 35,
+    right: 10,
   },
 });

@@ -12,15 +12,13 @@ import { PREFIX } from "../../lib/utils/helper/contants";
 import { countries } from "../../lib/utils/country/countriesList";
 import { Colors } from "../../lib/utils/colors";
 
-import { register } from "../../lib/state/actions";
-import { useDispatch } from "react-redux";
 import { useForm } from "../../lib/hooks/useForm";
 import { Input, DateInput, PickerInput } from "../Input/Input";
 import Button from "../Button/Button";
 
 const EyePassword = ({ onPress }) => {
   return (
-    <TouchableNativeFeedback onPress={onPress} di>
+    <TouchableNativeFeedback onPress={onPress}>
       <Ionicons style={styles.eye} name={`${PREFIX}-eye`} />
     </TouchableNativeFeedback>
   );
@@ -60,13 +58,9 @@ const SignupForm = () => {
 
   const onSubmit = () => {};
 
-  useEffect(() => {
-    register(defaultValues);
-  }, []);
+  useEffect(() => register(defaultValues), []);
 
-  useEffect(() => {
-    validate(formValues);
-  }, [formValues]);
+  useEffect(() => validate(formValues), [formValues]);
 
   return (
     <View testID="signup-form" style={styles.container}>

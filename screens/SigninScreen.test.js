@@ -1,8 +1,9 @@
 import React from "react";
 import { View } from "react-native";
-import { render, fireEvent } from "@testing-library/react-native";
-import SignupScreen from "./SignupScreen";
-import SignupForm from "../components/Sign/SignupForm";
+import { fireEvent, render } from "@testing-library/react-native";
+import SigninScreen from "./SigninScreen";
+import SigninForm from "../components/Sign/SigninForm";
+import {} from "@react-navigation/native";
 
 const mockGoBack = jest.fn();
 
@@ -15,31 +16,31 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-jest.mock("../components/Sign/SignupForm.js", () =>
+jest.mock("../components/Sign/SigninForm.js", () =>
   jest.fn().mockReturnValue(null)
 );
 
-describe("SignupScreen test suite", () => {
-  it("Should render screen correctly", () => {
-    const { getByTestId } = render(<SignupScreen />);
-    expect(getByTestId("signup-screen")).toBeTruthy();
+describe("SinginScreen test suite", () => {
+  it("Should render correctly", () => {
+    const { getByTestId } = render(<SigninScreen />);
+    expect(getByTestId("signin-screen")).toBeTruthy();
   });
 
-  it("Should go back when button Retour clicked", () => {
-    const { getByText } = render(<SignupScreen />);
-    const button = getByText(/Retour/);
+  it("Should call function goBack function when bouton clicked", () => {
+    const { getByText } = render(<SigninScreen />);
+    const button = getByText("Retour");
     fireEvent.press(button);
     expect(mockGoBack).toHaveBeenCalled();
   });
 
-  it("Should contain title", () => {
-    const { getByTestId } = render(<SignupScreen />);
-    expect(getByTestId("signup-screen-title")).toBeTruthy();
+  it("Should contain a title", () => {
+    const { getByTestId } = render(<SigninScreen />);
+    expect(getByTestId("signin-screen-title")).toBeTruthy();
   });
 
-  it("Should contain a section SignupForm", () => {
-    SignupForm.mockReturnValue(<View testID="mock-signup-form" />);
-    const { getByTestId } = render(<SignupScreen />);
-    expect(getByTestId("mock-signup-form")).toBeTruthy();
+  it("Should contain a section with a signin form", () => {
+    SigninForm.mockReturnValueOnce(<View testID="mock-signin-form" />);
+    const { getByTestId } = render(<SigninScreen />);
+    expect(getByTestId("mock-signin-form")).toBeTruthy();
   });
 });

@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import SignupForm from "../components/Sign/SignupForm";
 import { useNavigation } from "@react-navigation/native";
 import { Colors } from "../lib/utils/colors";
 import Constants from "expo-constants";
+import SignupForm from "../components/Sign/SignupForm";
 
 const BackButton = ({ label, onPress }) => {
   return (
