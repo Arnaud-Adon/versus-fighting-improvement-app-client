@@ -5,7 +5,6 @@ import App from "./App";
 import AppNavigator from "./navigation/AppNavigator.js";
 import { Provider } from "react-redux";
 import { store } from "./lib/state/store";
-import { loading } from "./lib/hooks/useSetting";
 
 jest.mock("./navigation/AppNavigator.js", () => jest.fn());
 jest.mock("react-redux", () => {
@@ -35,7 +34,6 @@ describe("App test suite", () => {
       providerStore = store;
       return <View testID="mock-provider" />;
     });
-
     const { getByTestId } = render(<App />);
     expect(getByTestId("mock-provider")).toBeTruthy();
     expect(providerStore).toEqual(store);

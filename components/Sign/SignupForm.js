@@ -3,13 +3,10 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
   Dimensions,
   TouchableNativeFeedback,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 
-import Constants from "expo-constants";
 import { Ionicons } from "@expo/vector-icons";
 import { PREFIX } from "../../lib/utils/helper/contants";
 import { countries } from "../../lib/utils/country/countriesList";
@@ -18,17 +15,8 @@ import { Colors } from "../../lib/utils/colors";
 import { register } from "../../lib/state/actions";
 import { useDispatch } from "react-redux";
 import { useForm } from "../../lib/hooks/useForm";
-import { useNavigation } from "@react-navigation/native";
 import { Input, DateInput, PickerInput } from "../Input/Input";
 import Button from "../Button/Button";
-
-const BackButton = ({ label, onPress }) => {
-  return (
-    <TouchableOpacity style={styles.back} onPress={onPress}>
-      <Text style={styles.backText}>{label}</Text>
-    </TouchableOpacity>
-  );
-};
 
 const EyePassword = ({ onPress }) => {
   return (
@@ -66,12 +54,6 @@ const SignupForm = () => {
     register,
   } = useForm(defaultValues);
 
-  const navigation = useNavigation();
-
-  const goBack = () => {
-    navigation.goBack();
-  };
-
   const showPassword = () => {
     setSecure(!secure);
   };
@@ -87,85 +69,81 @@ const SignupForm = () => {
   }, [formValues]);
 
   return (
-    <LinearGradient colors={[Colors.LIGHTER_RED, Colors.DARKER_RED]}>
-      <View testID="signup-form" style={styles.container}>
-        <BackButton label="Retour" onPress={goBack} />
-        <Text style={styles.title}>Inscription</Text>
-        <View>
-          <Text style={styles.label}>Pseudo:</Text>
-          <Input
-            testID="username"
-            style={styles.input}
-            onChangeText={() => handleChange("username")}
-          />
-        </View>
-        <View>
-          <Text style={styles.label}>email:</Text>
-          <Input
-            testID="email"
-            style={styles.input}
-            onChangeText={() => handleChange("email")}
-          />
-        </View>
-        <View style={styles.birthdayContainer}>
-          <Text style={styles.label}>Date de naissance:</Text>
-          <DateInput
-            testID="birthday"
-            style={styles.date}
-            onChange={() => handleChange("birthdayDate")}
-            value={formValues.birthdayDate ?? defaultValues.birthdayDate}
-          />
-        </View>
-        <View style={styles.country}>
-          <Text style={styles.label}>Votre pays:</Text>
-          <PickerInput
-            testID="country"
-            device={PREFIX}
-            countries={countries}
-            selectedValue={formValues.country ?? defaultValues.country}
-            style={styles.picker}
-            onChange={() => handleChange("country")}
-          />
-        </View>
-        <View>
-          <Text style={styles.label}>Mot de passe:</Text>
-          <View>
-            <Input
-              testID="password"
-              secureTextEntry={secure}
-              style={styles.input}
-              onChangeText={() => handleChange("password")}
-            />
-            <EyePassword onPress={showPassword} />
-          </View>
-        </View>
-        <View>
-          <Text style={styles.label}>Confirmation mot de passe:</Text>
-          <View>
-            <Input
-              testID="confirmPassword"
-              secureTextEntry={secure}
-              style={styles.input}
-              onChangeText={() => handleChange("confirmPassword")}
-            />
-            <EyePassword onPress={showPassword} />
-          </View>
-          <Error
-            isVisible={passwordIsValid}
-            label="les mots de passe ne sont pas identiques"
-          />
-        </View>
-        <Button
-          testID="submit"
-          onPress={onSubmit}
-          label="Confirmer"
-          firstColor={Colors.LIGHTER_BLUE}
-          secondColor={Colors.LIGHTER_BLUE}
-          style={[styles.button, !isValid && styles.disabledButton]}
-          disabled={!isValid}
+    <View testID="signup-form" style={styles.container}>
+      <View>
+        <Text style={styles.label}>Pseudo:</Text>
+        <Input
+          testID="username"
+          style={styles.input}
+          onChangeText={() => handleChange("username")}
         />
       </View>
-    </LinearGradient>
+      <View>
+        <Text style={styles.label}>email:</Text>
+        <Input
+          testID="email"
+          style={styles.input}
+          onChangeText={() => handleChange("email")}
+        />
+      </View>
+      <View style={styles.birthdayContainer}>
+        <Text style={styles.label}>Date de naissance:</Text>
+        <DateInput
+          testID="birthday"
+          style={styles.date}
+          onChange={() => handleChange("birthdayDate")}
+          value={formValues.birthdayDate ?? defaultValues.birthdayDate}
+        />
+      </View>
+      <View style={styles.country}>
+        <Text style={styles.label}>Votre pays:</Text>
+        <PickerInput
+          testID="country"
+          device={PREFIX}
+          countries={countries}
+          selectedValue={formValues.country ?? defaultValues.country}
+          style={styles.picker}
+          onChange={() => handleChange("country")}
+        />
+      </View>
+      <View>
+        <Text style={styles.label}>Mot de passe:</Text>
+        <View>
+          <Input
+            testID="password"
+            secureTextEntry={secure}
+            style={styles.input}
+            onChangeText={() => handleChange("password")}
+          />
+          <EyePassword onPress={showPassword} />
+        </View>
+      </View>
+      <View>
+        <Text style={styles.label}>Confirmation mot de passe:</Text>
+        <View>
+          <Input
+            testID="confirmPassword"
+            secureTextEntry={secure}
+            style={styles.input}
+            onChangeText={() => handleChange("confirmPassword")}
+          />
+          <EyePassword onPress={showPassword} />
+        </View>
+        <Error
+          isVisible={passwordIsValid}
+          label="les mots de passe ne sont pas identiques"
+        />
+      </View>
+      <Button
+        testID="submit"
+        onPress={onSubmit}
+        label="Confirmer"
+        firstColor={Colors.LIGHTER_BLUE}
+        secondColor={Colors.LIGHTER_BLUE}
+        style={[styles.button, !isValid && styles.disabledButton]}
+        disabled={!isValid}
+      />
+    </View>
   );
 };
 
@@ -173,17 +151,9 @@ export default SignupForm;
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
-    paddingTop: Constants.statusBarHeight,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "700",
-    lineHeight: 30,
-    color: Colors.WHITE,
   },
   label: {
     color: Colors.WHITE,
@@ -230,14 +200,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     top: 15,
     right: 10,
-  },
-  back: {
-    position: "absolute",
-    top: 60,
-    left: 20,
-  },
-  backText: {
-    fontSize: 20,
-    color: Colors.WHITE,
   },
 });
