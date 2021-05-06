@@ -4,7 +4,7 @@ import { render, waitFor } from "@testing-library/react-native";
 import App from "./App";
 import AppNavigator from "./navigation/AppNavigator.js";
 import { Provider } from "react-redux";
-import { store } from "./lib/state/store";
+import store from "./lib/state/store";
 
 jest.mock("./navigation/AppNavigator.js", () => jest.fn());
 jest.mock("react-redux", () => {

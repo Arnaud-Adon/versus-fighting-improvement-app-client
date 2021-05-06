@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { Provider } from "react-redux";
-import { store } from "./lib/state/store";
-
+import store from "./lib/state/store";
 import useSetting from "./lib/hooks/useSetting";
-
 import Loading from "./components/Loading/Loading";
 import AppNavigator from "./navigation/AppNavigator";
 
