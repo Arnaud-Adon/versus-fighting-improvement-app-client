@@ -15,6 +15,8 @@ import { Colors } from "../../lib/utils/colors";
 import { useForm } from "../../lib/hooks/useForm";
 import { Input, DateInput, PickerInput } from "../Input/Input";
 import Button from "../Button/Button";
+import { connect } from "react-redux";
+import { signUp } from "../../lib/state/actions";
 
 const EyePassword = ({ onPress }) => {
   return (
@@ -25,7 +27,7 @@ const EyePassword = ({ onPress }) => {
 };
 
 const Error = ({ isVisible, label }) => {
-  return isVisible && <Text style={styles.error}>{label}</Text>;
+  return isVisible && <Text>{label}</Text>;
 };
 
 const { width } = Dimensions.get("window");
@@ -39,14 +41,15 @@ const defaultValues = {
   confirmPassword: "",
 };
 
-const SignupForm = () => {
+const SignupForm = (props) => {
+  const { status, signUp, error } = props;
   const {
     formValues,
-    errors,
     secure,
     setSecure,
     isValid,
     passwordIsValid,
+    emailIsValid,
     validate,
     handleChange,
     register,
@@ -56,7 +59,13 @@ const SignupForm = () => {
     setSecure(!secure);
   };
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    const data = {
+      ...formValues,
+      email: formValues.email.toLowerCase(),
+    };
+    signUp(data);
+  };
 
   useEffect(() => register(defaultValues), []);
 
@@ -78,6 +87,10 @@ const SignupForm = () => {
           testID="email"
           style={styles.input}
           onChangeText={() => handleChange("email")}
+        />
+        <Error
+          label="L'adresse email n'est pas valide."
+          isVisible={formValues.email?.length > 0 && emailIsValid}
         />
       </View>
       <View style={styles.birthdayContainer}>
@@ -136,12 +149,24 @@ const SignupForm = () => {
         secondColor={Colors.LIGHTER_BLUE}
         style={[styles.button, !isValid && styles.disabledButton]}
         disabled={!isValid}
+        loading={status === "LOADING"}
       />
+      <Error label={error} isVisible={!!error} />
     </View>
   );
 };
 
-export default SignupForm;
+export default connect(
+  (state) => {
+    return {
+      error: state.user.error,
+      status: state.user.status,
+    };
+  },
+  {
+    signUp,
+  }
+)(SignupForm);
 
 const styles = StyleSheet.create({
   container: {

@@ -1,6 +1,13 @@
 import React from "react";
-import { fireEvent, render } from "@testing-library/react-native";
 import SignupForm from "./SignupForm";
+import {
+  fireEvent,
+  render,
+  waitFor,
+  mockStore,
+} from "../../lib/utils/test/test.utils";
+import { fetchFailure, signUp } from "../../lib/state/actions";
+import { act } from "react-test-renderer";
 
 describe("SignupForm Test suite", () => {
   it("Should render SignupForm Correctly", () => {
@@ -46,11 +53,67 @@ describe("SignupForm Test suite", () => {
       const password = getByTestId("password");
       const confirmPassword = getByTestId("confirmPassword");
       fireEvent.changeText(username, "mock-username");
-      fireEvent.changeText(email, "mock-email");
+      fireEvent.changeText(email, "mock@email.fr");
       fireEvent.changeText(password, "mock-password");
       fireEvent.changeText(confirmPassword, "mock-password");
 
       expect(getByTestId("submit")).not.toBeDisabled();
+    });
+
+    describe("Store", () => {
+      it("Should sign up user ", async () => {
+        const mockDataUser = {
+          username: "mock-username",
+          email: "mock@email.fr",
+          birthdayDate: "mock-birthdayDate",
+          country: "mock-country",
+          password: "mock-password",
+        };
+
+        const interceptor = jest.fn();
+        const store = mockStore(interceptor);
+
+        render(<SignupForm />, { store });
+
+        act(() => {
+          store.dispatch(signUp(mockDataUser));
+        });
+
+        await waitFor(() =>
+          expect(interceptor).toHaveBeenCalledWith(signUp(mockDataUser))
+        );
+      });
+
+      it("Should display laoding when dispatch signUp", () => {
+        const mockDataUser = {
+          username: "mock-username",
+          email: "mock@email.fr",
+          birthdayDate: "mock-birthdayDate",
+          country: "mock-country",
+          password: "mock-password",
+        };
+
+        const store = mockStore();
+
+        const { getByTestId } = render(<SignupForm />, { store });
+
+        act(() => {
+          store.dispatch(signUp(mockDataUser));
+        });
+
+        expect(getByTestId("loading")).toBeTruthy();
+      });
+
+      it("Should display error", async () => {
+        const store = mockStore();
+        const { findByText } = render(<SignupForm />, { store });
+
+        act(() => {
+          store.dispatch(fetchFailure("mock-error"));
+        });
+
+        return expect(findByText("mock-error")).resolves.toBeTruthy();
+      });
     });
   });
 });

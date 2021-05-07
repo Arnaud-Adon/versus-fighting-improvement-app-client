@@ -1,6 +1,11 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import PropTypes from "prop-types";
 
 const Button = ({
@@ -10,6 +15,7 @@ const Button = ({
   secondColor,
   style,
   disabled,
+  loading,
   ...others
 }) => {
   return (
@@ -20,7 +26,11 @@ const Button = ({
         style={[styles.container, style]}
         {...others}
       >
-        <Text style={styles.label}>{label}</Text>
+        {!!loading ? (
+          <ActivityIndicator testID="loading" size="large" />
+        ) : (
+          <Text style={styles.label}>{label}</Text>
+        )}
       </LinearGradient>
     </TouchableOpacity>
   );

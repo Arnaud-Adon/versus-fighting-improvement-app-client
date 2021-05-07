@@ -1,8 +1,8 @@
 import React from "react";
 import { View } from "react-native";
-import { render, fireEvent } from "@testing-library/react-native";
 import SignupScreen from "./SignupScreen";
 import SignupForm from "../components/Sign/SignupForm";
+import { render, fireEvent } from "../lib/utils/test/test.utils";
 
 const mockGoBack = jest.fn();
 
