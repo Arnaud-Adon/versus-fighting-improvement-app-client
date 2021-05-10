@@ -10,8 +10,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { Input } from "../Input/Input";
 import { useForm } from "../../lib/hooks/useForm";
 import { PREFIX } from "../../lib/utils/helper/contants";
-import Button from "../Button/Button";
 import { Colors } from "../../lib/utils/colors";
+import { connect } from "react-redux";
+import { signIn } from "../../lib/state/actions";
+import Button from "../Button/Button";
+import { Status } from "../../lib/utils/types/status";
 
 const { width } = Dimensions.get("window");
 
@@ -28,7 +31,11 @@ const EyePassword = ({ onPress }) => {
   );
 };
 
-const SigninForm = () => {
+const Error = ({ isVisible, label }) => {
+  return isVisible && <Text>{label}</Text>;
+};
+
+const SigninForm = ({ signIn, status, error }) => {
   const {
     formValues,
     handleChange,
@@ -43,7 +50,9 @@ const SigninForm = () => {
     setSecure(!secure);
   };
 
-  const onSubmit = (data) => {};
+  const onSubmit = () => {
+    signIn(formValues);
+  };
 
   useEffect(() => register(defaultValues), []);
 
@@ -78,12 +87,22 @@ const SigninForm = () => {
         secondColor={Colors.DARKER_RED}
         style={[styles.button, !isValid && styles.disabledButton]}
         disabled={!isValid}
+        loading={status === Status.LOADING}
       />
+      <Error isVisible={!!error} label={error} />
     </View>
   );
 };
 
-export default SigninForm;
+export default connect(
+  (state) => ({
+    status: state.user.status,
+    error: state.user.error,
+  }),
+  {
+    signIn,
+  }
+)(SigninForm);
 
 const styles = StyleSheet.create({
   container: {

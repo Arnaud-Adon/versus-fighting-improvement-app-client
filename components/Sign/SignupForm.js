@@ -17,6 +17,7 @@ import { Input, DateInput, PickerInput } from "../Input/Input";
 import Button from "../Button/Button";
 import { connect } from "react-redux";
 import { signUp } from "../../lib/state/actions";
+import { Status } from "../../lib/utils/types/status";
 
 const EyePassword = ({ onPress }) => {
   return (
@@ -41,8 +42,7 @@ const defaultValues = {
   confirmPassword: "",
 };
 
-const SignupForm = (props) => {
-  const { status, signUp, error } = props;
+const SignupForm = ({ status, signUp, error }) => {
   const {
     formValues,
     secure,
@@ -149,7 +149,7 @@ const SignupForm = (props) => {
         secondColor={Colors.LIGHTER_BLUE}
         style={[styles.button, !isValid && styles.disabledButton]}
         disabled={!isValid}
-        loading={status === "LOADING"}
+        loading={status === Status.LOADING}
       />
       <Error label={error} isVisible={!!error} />
     </View>

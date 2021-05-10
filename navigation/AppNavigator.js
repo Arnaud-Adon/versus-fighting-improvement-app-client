@@ -78,6 +78,7 @@ const AppNavigator = () => {
           },
           headerRight: () => {
             if (
+              route.name === "SelectCharacter" ||
               route.name === "Improve" ||
               route.name === "Stat" ||
               route.name === "Video" ||

@@ -4,6 +4,8 @@ import { fireEvent, render } from "@testing-library/react-native";
 import SigninScreen from "./SigninScreen";
 import SigninForm from "../components/Sign/SigninForm";
 import {} from "@react-navigation/native";
+import { mockStore } from "../lib/utils/test/test.utils";
+import store from "../lib/state/store";
 
 const mockGoBack = jest.fn();
 

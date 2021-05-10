@@ -1,5 +1,12 @@
 import React from "react";
-import { fireEvent, render } from "@testing-library/react-native";
+import { fetchFailure, signIn } from "../../lib/state/actions";
+import {
+  fireEvent,
+  render,
+  act,
+  mockStore,
+  waitFor,
+} from "../../lib/utils/test/test.utils";
 import SigninForm from "./SigninForm";
 
 describe("SigninForm test suite", () => {
@@ -31,5 +38,48 @@ describe("SigninForm test suite", () => {
     fireEvent.changeText(username, "mock-username");
     fireEvent.changeText(password, "mock-password");
     expect(getByTestId("submit")).not.toBeDisabled();
+  });
+
+  describe("Store/signIn", () => {
+    const mockUserData = {
+      username: "mock-username",
+      password: "mock-password",
+    };
+    it("Should signIn user", async () => {
+      const interceptor = jest.fn();
+      const store = mockStore(interceptor);
+
+      render(<SigninForm />, { store });
+
+      act(() => {
+        store.dispatch(signIn(mockUserData));
+      });
+
+      await waitFor(() =>
+        expect(interceptor).toHaveBeenCalledWith(signIn(mockUserData))
+      );
+    });
+
+    it("Should display error when dispatch sigIn is unsuccessful", () => {
+      const store = mockStore();
+      const { findByText } = render(<SigninForm />, { store });
+
+      act(() => {
+        store.dispatch(fetchFailure("mock-error"));
+      });
+
+      return expect(findByText("mock-error")).resolves.toBeTruthy();
+    });
+
+    it("Should display loading when signIn user", async () => {
+      const store = mockStore();
+      const { getByTestId } = render(<SigninForm />, { store });
+
+      act(() => {
+        store.dispatch(signIn(mockUserData));
+      });
+
+      expect(getByTestId("loading")).toBeTruthy();
+    });
   });
 });
