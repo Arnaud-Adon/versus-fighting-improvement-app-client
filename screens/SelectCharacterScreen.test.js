@@ -14,10 +14,10 @@ describe("SelectCharacter test suite", () => {
 
   it("Should display select characterScreen", () => {});
 
-  it("Should display character list", () => {
-    const { getByTestId } = render(<SelectCharacterScreen />);
-    expect(getByTestId("character-list")).toBeTruthy();
-  });
+  //   it("Should display character list", () => {
+  //     const { getByTestId } = render(<SelectCharacterScreen />);
+  //     expect(getByTestId("character-list")).toBeTruthy();
+  //   });
 
   describe("Store", () => {
     it("Should contain characters from store", async () => {
