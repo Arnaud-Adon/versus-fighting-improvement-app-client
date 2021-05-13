@@ -1,40 +1,69 @@
-import nock from "nock";
 import React from "react";
-import { act } from "react-test-renderer";
-import { addUserCharacterResponse } from "../dto/addUserCharacter.dto";
-import { fetchCharacters } from "../lib/state/actions";
-import { mockStore, render, waitFor } from "../lib/utils/test/test.utils";
+import { addCharacter } from "../lib/state/actions";
+import {
+  mockStore,
+  act,
+  waitFor,
+  customRenderCharacterContext,
+} from "../lib/utils/test/test.utils";
 import SelectCharacterScreen from "./SelectCharacterScreen";
 
-describe("SelectCharacter test suite", () => {
+describe("SelectCharacterScreen test suite", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  const mockCharacters = [
+    { _id: 1, name: "character1" },
+    { _id: 2, name: "character2" },
+  ];
+
   it("Should render correctly", () => {
-    const { getByTestId } = render(<SelectCharacterScreen />);
+    const { getByTestId } = customRenderCharacterContext(
+      <SelectCharacterScreen />,
+      {}
+    );
     expect(getByTestId("select-character-screen")).toBeTruthy();
   });
 
-  it("Should display select characterScreen", () => {});
+  it("Should display character list", () => {
+    const { getByTestId } = customRenderCharacterContext(
+      <SelectCharacterScreen />,
+      {}
+    );
+    expect(getByTestId("character-list")).toBeTruthy();
+  });
 
-  //   it("Should display character list", () => {
-  //     const { getByTestId } = render(<SelectCharacterScreen />);
-  //     expect(getByTestId("character-list")).toBeTruthy();
-  //   });
+  it("Should display character skills for the character selected", () => {
+    const { getByTestId } = customRenderCharacterContext(
+      <SelectCharacterScreen />,
+      {}
+    );
+    expect(getByTestId("skills")).toBeTruthy();
+  });
+
+  it("Should display button", () => {
+    const { getByTestId } = customRenderCharacterContext(
+      <SelectCharacterScreen />,
+      {}
+    );
+    expect(getByTestId("button")).toBeTruthy();
+  });
 
   describe("Store", () => {
-    it("Should contain characters from store", async () => {
-      const store = mockStore();
-      render(<SelectCharacterScreen />, { store });
-
-      nock("http://localhost:3090")
-        .get("/characters")
-        .reply(200, addUserCharacterResponse);
-
-      act(() => {
-        store.dispatch(fetchCharacters());
+    it("Should handle addCharacters action", async () => {
+      const interceptor = jest.fn();
+      const store = mockStore(interceptor);
+      customRenderCharacterContext(<SelectCharacterScreen />, {
+        providerProps: { characters: mockCharacters },
+        store,
       });
 
-      await waitFor(() => console.log(store.getState()));
+      act(() => {
+        store.dispatch(addCharacter("mock-data"));
+      });
 
-      //   expect(store.getState())
+      await waitFor(() =>
+        expect(interceptor).toHaveBeenCalledWith(addCharacter("mock-data"))
+      );
     });
   });
 });

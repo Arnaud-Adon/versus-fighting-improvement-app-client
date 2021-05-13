@@ -5,9 +5,9 @@ import {
   render,
   waitFor,
   mockStore,
+  act,
 } from "../../lib/utils/test/test.utils";
 import { fetchFailure, signUp } from "../../lib/state/actions";
-import { act } from "react-test-renderer";
 
 describe("SignupForm Test suite", () => {
   it("Should render SignupForm Correctly", () => {

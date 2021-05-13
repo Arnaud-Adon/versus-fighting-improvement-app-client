@@ -1,25 +1,27 @@
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { connect } from "react-redux";
 import logoutImage from "../../assets/images/functions/logout.png";
-import { useDispatch } from "react-redux";
 import { logout } from "../../lib/state/actions";
+import { Colors } from "../../lib/utils/colors";
 
-const Logout = () => {
-  const dispatch = useDispatch();
-  const { container, imageStyle } = styles;
-
-  const onLogout = () => {
-    dispatch(logout());
-  };
+const Logout = ({ logout }) => {
+  const handleOnLogout = () => logout();
 
   return (
-    <TouchableOpacity style={container} onPress={onLogout}>
-      <Image style={imageStyle} source={logoutImage} />
+    <TouchableOpacity
+      testID="logout"
+      style={styles.container}
+      onPress={handleOnLogout}
+    >
+      <Image testID="logout-image" style={styles.image} source={logoutImage} />
     </TouchableOpacity>
   );
 };
 
-export default Logout;
+export default connect(undefined, {
+  logout,
+})(Logout);
 
 const styles = StyleSheet.create({
   container: {
@@ -28,7 +30,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-end",
   },
-  imageStyle: {
+  image: {
     width: 30,
     height: 30,
   },

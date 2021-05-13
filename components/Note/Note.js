@@ -12,7 +12,6 @@ const Note = ({ id, text }) => {
   const user = useSelector((state) => getUserInformations(state));
 
   const confirmUpdateNote = (noteId) => {
-    console.log("confirmUpdateNote id", noteId);
     dispatch(getNoteId(noteId));
   };
 

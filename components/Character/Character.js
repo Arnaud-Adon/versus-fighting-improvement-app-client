@@ -1,14 +1,19 @@
 import React from "react";
 import { StyleSheet, View, Image, Text } from "react-native";
-import { renderImageRequire } from "../../lib/utils/image/RequireImageList";
+import { Colors } from "../../lib/utils/colors";
+import renderImageRequire from "../../lib/utils/image/RequireImageList";
 
 const Character = ({ name }) => {
-  const { container, imageStyle, textStyle } = styles;
-
   return (
-    <View style={container}>
-      <Image style={imageStyle} source={renderImageRequire(name)} />
-      <Text style={textStyle}>{name}</Text>
+    <View testID="character" style={styles.container}>
+      <Image
+        testID="character-image"
+        style={styles.image}
+        source={renderImageRequire(name)}
+      />
+      <Text testID="character-name" style={styles.name}>
+        {name}
+      </Text>
     </View>
   );
 };
@@ -19,14 +24,16 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 10,
   },
-  imageStyle: {
+  image: {
     width: 100,
     height: 100,
     borderWidth: 1,
+    borderRadius: 5,
     backgroundColor: "#fff",
   },
-  textStyle: {
+  name: {
     fontWeight: "600",
     textAlign: "center",
+    color: Colors.WHITE,
   },
 });

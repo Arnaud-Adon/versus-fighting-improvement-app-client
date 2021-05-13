@@ -6,7 +6,6 @@ import { Colors } from "../lib/utils/colors";
 import Constants from "expo-constants";
 import SigninForm from "../components/Sign/SigninForm";
 import GoogleAuthForm from "../components/Sign/GoogleAuthForm";
-import Error from "../components/Error/Error";
 
 const BackButton = ({ label, onPress }) => {
   return (
@@ -30,7 +29,6 @@ const SigninScreen = () => {
         </Text>
         <SigninForm />
         <GoogleAuthForm />
-        {/* <Error /> */}
       </View>
     </LinearGradient>
   );

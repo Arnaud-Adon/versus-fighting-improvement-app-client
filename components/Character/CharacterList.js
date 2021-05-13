@@ -1,52 +1,52 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
 import {
   View,
   FlatList,
   StyleSheet,
-  Dimensions,
   Text,
   TouchableOpacity,
 } from "react-native";
-import { fetchCharacters } from "../../lib/state/actions/index";
+import { useCharacter } from "../../lib/hooks/useCharacter";
+import { Colors } from "../../lib/utils/colors";
 import Character from "./Character";
 
-const { width } = Dimensions.get("window");
+const CharacterBlock = ({ character, onPress }) => {
+  return (
+    <TouchableOpacity onPress={() => onPress(character._id)}>
+      <Character name={character.name} />
+    </TouchableOpacity>
+  );
+};
 
-const CharacterList = ({ getSkills }) => {
-  const dispatch = useDispatch();
-  const { container, nameCharacterStyle } = styles;
-  const [nameCharacter, setNameCharacter] = useState("");
-  const characters = useSelector((state) => state.characters.charactersList);
+const Name = ({ name }) => {
+  return (
+    <Text testID="character-selected-name" style={styles.name}>
+      {name}
+    </Text>
+  );
+};
 
-  useEffect(() => {
-    dispatch(fetchCharacters());
-  }, []);
+const List = ({ characters, onPress }) => {
+  return (
+    <FlatList
+      testID="characters"
+      data={characters ?? {}}
+      horizontal={true}
+      renderItem={({ item }) => (
+        <CharacterBlock character={item} onPress={onPress} />
+      )}
+      keyExtractor={(item) => item._id.toString()}
+    />
+  );
+};
 
-  useEffect(() => {
-    if (characters.length > 0 && nameCharacter === "") {
-      setNameCharacter(characters[0].name);
-    }
-  }, [characters]);
-
-  const choiceCharacter = (item) => {
-    setNameCharacter(item.name);
-    getSkills(item);
-  };
+const CharacterList = ({ characters }) => {
+  const { character, handleCharacterChange } = useCharacter();
 
   return (
-    <View>
-      <FlatList
-        data={characters}
-        horizontal={true}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => choiceCharacter(item)}>
-            <Character imageSrc={item.imageName} name={item.name} />
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item._id.toString()}
-      />
-      <Text style={nameCharacterStyle}>{nameCharacter}</Text>
+    <View testID="character-list">
+      <List characters={characters} onPress={handleCharacterChange} />
+      <Name name={character.name} />
     </View>
   );
 };
@@ -54,11 +54,11 @@ const CharacterList = ({ getSkills }) => {
 export default CharacterList;
 
 const styles = StyleSheet.create({
-  nameCharacterStyle: {
+  name: {
     marginTop: 30,
     fontSize: 50,
     fontWeight: "600",
     textAlign: "center",
-    color: "#66CC99",
+    color: Colors.WHITE,
   },
 });

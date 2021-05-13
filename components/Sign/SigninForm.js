@@ -32,7 +32,7 @@ const EyePassword = ({ onPress }) => {
 };
 
 const Error = ({ isVisible, label }) => {
-  return isVisible && <Text>{label}</Text>;
+  return isVisible && <Text style={styles.error}>{label}</Text>;
 };
 
 const SigninForm = ({ signIn, status, error }) => {
@@ -131,7 +131,8 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   error: {
-    color: "red",
+    marginBottom: 10,
+    color: Colors.RED,
   },
   eye: {
     position: "absolute",

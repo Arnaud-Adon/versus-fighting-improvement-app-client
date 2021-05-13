@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View } from "react-native";
-import { cleanup, render, waitFor } from "@testing-library/react-native";
+import { render, waitFor } from "../lib/utils/test/test.utils";
 import AppNavigator from "./AppNavigator";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";

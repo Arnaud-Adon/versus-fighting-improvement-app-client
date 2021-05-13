@@ -66,6 +66,10 @@ const AppNavigator = () => {
       <Stack.Navigator
         initialRouteName={"Login"}
         screenOptions={({ route, navigation }) => ({
+          headerStyle: {
+            backgroundColor: Colors.DARKER_RED,
+            borderWidth: "none",
+          },
           headerTitle: false,
           headerLeft: () => {
             if (route.name === "Signup" || route.name === "Signin") {
@@ -109,6 +113,7 @@ const AppNavigator = () => {
           component={SelectCharacterScreen}
         />
         <Stack.Screen name="Improve" component={ImproveTabsScreen} />
+        <Stack.Screen name="Logout" component={Logout} />
       </Stack.Navigator>
     </NavigationContainer>
   );
