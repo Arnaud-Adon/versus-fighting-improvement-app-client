@@ -16,8 +16,6 @@ import { signIn } from "../../lib/state/actions";
 import Button from "../Button/Button";
 import { Status } from "../../lib/utils/types/status";
 
-const { width } = Dimensions.get("window");
-
 const defaultValues = {
   username: "",
   password: "",
@@ -103,6 +101,8 @@ export default connect(
     signIn,
   }
 )(SigninForm);
+
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {

@@ -4,12 +4,13 @@ import store from "./lib/state/store";
 import useSetting from "./lib/hooks/useSetting";
 import Loading from "./components/Loading/Loading";
 import AppNavigator from "./navigation/AppNavigator";
-import CharacterProvider from "./lib/hooks/useCharacter";
+import { fetchCharacters } from "./lib/state/actions";
 
 export default function App() {
   const { loading, loadConfiguration } = useSetting();
 
   useEffect(() => {
+    store.dispatch(fetchCharacters());
     loadConfiguration();
   }, []);
 
@@ -18,9 +19,7 @@ export default function App() {
   } else {
     return (
       <Provider store={store}>
-        <CharacterProvider characters={store.getState().character.characters}>
-          <AppNavigator />
-        </CharacterProvider>
+        <AppNavigator />
       </Provider>
     );
   }

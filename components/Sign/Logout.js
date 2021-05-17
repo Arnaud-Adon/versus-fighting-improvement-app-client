@@ -3,7 +3,6 @@ import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import logoutImage from "../../assets/images/functions/logout.png";
 import { logout } from "../../lib/state/actions";
-import { Colors } from "../../lib/utils/colors";
 
 const Logout = ({ logout }) => {
   const handleOnLogout = () => logout();

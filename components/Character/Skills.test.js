@@ -1,7 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react-native";
 import Skills from "./Skills";
-import { customRenderCharacterContext } from "../../lib/utils/test/test.utils";
 
 describe("Skills test suite", () => {
   const mockCharacter = {
@@ -16,18 +15,12 @@ describe("Skills test suite", () => {
     },
   };
   it("Should render correctly", () => {
-    const { getByTestId } = customRenderCharacterContext(
-      <Skills character={mockCharacter} />,
-      {}
-    );
+    const { getByTestId } = render(<Skills character={mockCharacter} />);
     expect(getByTestId("skills")).toBeTruthy();
   });
 
   it("Should render all skills titles", () => {
-    const { getByText } = customRenderCharacterContext(
-      <Skills character={mockCharacter} />,
-      {}
-    );
+    const { getByText } = render(<Skills character={mockCharacter} />);
     expect(getByText("Technique")).toBeTruthy();
     expect(getByText("Portée")).toBeTruthy();
     expect(getByText("Mobilité")).toBeTruthy();
@@ -36,10 +29,7 @@ describe("Skills test suite", () => {
   });
 
   it("Should display 25 stars for character on screen", () => {
-    const { getAllByTestId } = customRenderCharacterContext(
-      <Skills character={mockCharacter} />,
-      {}
-    );
+    const { getAllByTestId } = render(<Skills character={mockCharacter} />);
 
     expect(getAllByTestId("star").length).toEqual(25);
   });

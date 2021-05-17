@@ -42,14 +42,13 @@ const SkillBlock = ({ ...props }) => {
 };
 
 const Skills = ({ character }) => {
-  const { skills } = character;
   return (
     <View testID="skills" style={styles.container}>
-      <SkillBlock label="Technique" level={skills?.technical} />
-      <SkillBlock label="Portée" level={skills?.scope} />
-      <SkillBlock label="Mobilité" level={skills?.mobility} />
-      <SkillBlock label="Santé" level={skills?.health} />
-      <SkillBlock label="Puissance" level={skills?.power} />
+      <SkillBlock label="Technique" level={character?.skills.technical} />
+      <SkillBlock label="Portée" level={character?.skills.scope} />
+      <SkillBlock label="Mobilité" level={character?.skills.mobility} />
+      <SkillBlock label="Santé" level={character?.skills.health} />
+      <SkillBlock label="Puissance" level={character?.skills.power} />
     </View>
   );
 };
@@ -76,8 +75,8 @@ const styles = StyleSheet.create({
   },
 });
 
-// Skills.propTypes = {
-//   character: PropTypes.object.isRequired,
-// };
+Skills.propTypes = {
+  character: PropTypes.object.isRequired,
+};
 
 export default Skills;

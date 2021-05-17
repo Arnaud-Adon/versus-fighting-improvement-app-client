@@ -6,11 +6,12 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { useCharacter } from "../../lib/hooks/useCharacter";
 import { Colors } from "../../lib/utils/colors";
 import Character from "./Character";
 
 const CharacterBlock = ({ character, onPress }) => {
+  console.log(character._id);
+  console.log(onPress);
   return (
     <TouchableOpacity onPress={() => onPress(character._id)}>
       <Character name={character.name} />
@@ -40,12 +41,10 @@ const List = ({ characters, onPress }) => {
   );
 };
 
-const CharacterList = ({ characters }) => {
-  const { character, handleCharacterChange } = useCharacter();
-
+const CharacterList = ({ characters, character, handleCharacter }) => {
   return (
     <View testID="character-list">
-      <List characters={characters} onPress={handleCharacterChange} />
+      <List characters={characters} onPress={handleCharacter} />
       <Name name={character.name} />
     </View>
   );

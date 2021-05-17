@@ -2,55 +2,29 @@ import React, { useState, useEffect } from "react";
 import { Image, StyleSheet, Text, View, Dimensions } from "react-native";
 import PropTypes from "prop-types";
 
-const { width } = Dimensions.get("window");
-
-const UserInfo = ({ username, imageId }) => {
-  const { container, imageContainer, imageStyle, usernameStyle } = styles;
-
+const UserInfo = ({ user }) => {
   return (
-    <View style={container}>
-      <View style={imageContainer}>
-        <Image style={imageStyle} />
+    <View testID="user-info" style={styles.container}>
+      <View style={styles.imageContainer}>
+        <Image
+          testID="user-image"
+          source={{ uri: user?.path }}
+          style={styles.image}
+        />
       </View>
-      <View>
-        {username ? (
-          <Text style={usernameStyle}>{username}</Text>
-        ) : (
-          <Text style={usernameStyle}>Pas de pseudo</Text>
-        )}
-      </View>
+      <Text>{user?.username}</Text>
     </View>
   );
 };
 
-UserInfo.propTypes = {
-  username: PropTypes.string.isRequired,
-  //   imageId: PropTypes.string.isRequired,
-};
-
 export default UserInfo;
 
+// UserInfo.propTypes = {
+//   user: PropTypes.object.isRequired
+// }
+
 const styles = StyleSheet.create({
-  container: {
-    marginVertical: 10,
-    paddingHorizontal: 10,
-    width,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  imageContainer: {
-    marginHorizontal: 10,
-    width: 50,
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 50,
-    borderColor: "#979797",
-  },
-  usernameStyle: {
-    fontSize: 15,
-    fontWeight: "500",
-    lineHeight: 20,
-  },
-  imageStyle: {},
+  container: {},
+  image: {},
+  imageContainer: {},
 });
