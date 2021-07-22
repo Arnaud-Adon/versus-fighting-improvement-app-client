@@ -73,7 +73,6 @@ const SigninForm = ({ signIn, status, error }) => {
           secureTextEntry={secure}
           onChangeText={() => handleChange("password")}
           style={styles.input}
-          se
         />
         <EyePassword onPress={showPassword} />
       </View>
@@ -116,6 +115,7 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 10,
     marginBottom: 10,
+    fontSize: 18,
     borderWidth: 1,
     borderColor: Colors.WHITE,
     borderRadius: 10,

@@ -1,15 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, View, Dimensions } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import { Colors } from "../lib/utils/colors";
 import { connect } from "react-redux";
-import { addCharacter } from "../lib/state/actions";
 import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button/Button";
 import CharacterList from "../components/Character/CharacterList";
 import Skills from "../components/Character/Skills";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useSelectCharacterContext } from "../lib/context/selectCharacterContext";
 
-const SelectCharacterScreen = ({ user, addCharacter, characters }) => {
-  const [characterSelected, setCharacterSelected] = useState({});
+const Loading = () => {
+  return <ActivityIndicator testID="loading-select-character" size="large" />;
+};
+
+const BackImproveButton = ({ isVisible, onPress }) => {
+  return (
+    isVisible && (
+      <Button
+        testID="back-button"
+        style={styles.button}
+        onPress={onPress}
+        firstColor={Colors.DARKER_BLUE}
+        secondColor={Colors.DARKER_BLUE}
+        label="Retour"
+      />
+    )
+  );
+};
+
+const SelectCharacterScreen = ({ characters }) => {
+  const { params } = useRoute();
+  const { navigate, goBack } = useNavigation();
+  const {
+    userCharacter,
+    opponentCharacter,
+    setUserCharacter,
+    setOpponentCharacter,
+  } = useSelectCharacterContext();
+  const [characterSelected, setCharacterSelected] = useState(null);
 
   const handleCharacter = (id) => {
     setCharacterSelected(
@@ -18,12 +52,19 @@ const SelectCharacterScreen = ({ user, addCharacter, characters }) => {
   };
 
   const onSubmit = () => {
-    const data = { userId: user._id, characterId: characterSelected._id };
-    addCharacter(data);
+    if (params === "opponent") {
+      setOpponentCharacter(characterSelected);
+      goBack();
+    } else {
+      setUserCharacter(characterSelected);
+      navigate("Improve");
+    }
   };
 
   useEffect(() => {
-    setCharacterSelected(characters[0]);
+    if (params === "user") setCharacterSelected(userCharacter);
+    else if (params === "opponent") setCharacterSelected(opponentCharacter);
+    else setCharacterSelected(characters[0]);
   }, [characters]);
 
   return (
@@ -31,38 +72,43 @@ const SelectCharacterScreen = ({ user, addCharacter, characters }) => {
       style={styles.container}
       colors={[Colors.DARKER_RED, Colors.DARKER_BLUE, Colors.LIGHTER_BLUE]}
     >
-      <View testID="select-character-screen">
-        <Text testID="select-character-screen-title" style={styles.title}>
-          Sélectionner un personnage
-        </Text>
-        <CharacterList
-          characters={characters}
-          character={characterSelected}
-          handleCharacter={handleCharacter}
-        />
-        <Skills character={characterSelected} />
-        <Button
-          testID="button"
-          style={styles.button}
-          onPress={onSubmit}
-          firstColor={Colors.DARKER_RED}
-          secondColor={Colors.DARKER_RED}
-          label="Valider"
-        />
-      </View>
+      {!characterSelected ? (
+        <Loading />
+      ) : (
+        <View testID="select-character-screen">
+          <Text testID="select-character-screen-title" style={styles.title}>
+            Sélectionner un personnage
+          </Text>
+          <CharacterList
+            characters={characters}
+            character={characterSelected}
+            handleCharacter={handleCharacter}
+            direction={true}
+          />
+          <Skills character={characterSelected} />
+          <Button
+            testID="button"
+            style={styles.button}
+            onPress={onSubmit}
+            firstColor={Colors.DARKER_RED}
+            secondColor={Colors.DARKER_RED}
+            label="Valider"
+          />
+          <BackImproveButton
+            isVisible={params == "user" || params == "opponent"}
+            onPress={goBack}
+          />
+        </View>
+      )}
     </LinearGradient>
   );
 };
 
-export default connect(
-  (state) => {
-    return {
-      user: state.user.infos,
-      characters: state.character.characters,
-    };
-  },
-  { addCharacter }
-)(SelectCharacterScreen);
+export default connect((state) => {
+  return {
+    characters: state.character.characters,
+  };
+}, null)(SelectCharacterScreen);
 
 const styles = StyleSheet.create({
   container: {

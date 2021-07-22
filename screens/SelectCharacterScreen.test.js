@@ -2,9 +2,12 @@ import React from "react";
 import { View } from "react-native";
 import CharacterList from "../components/Character/CharacterList";
 import Skills from "../components/Character/Skills";
-import { addCharacter } from "../lib/state/actions";
-import { mockStore, act, waitFor, render } from "../lib/utils/test/test.utils";
+import { waitFor, render } from "../lib/utils/test/test.utils";
 import SelectCharacterScreen from "./SelectCharacterScreen";
+import { useRoute } from "@react-navigation/native";
+import Button from "../components/Button/Button";
+
+const mockNavigate = jest.fn();
 
 jest.mock("../components/Character/CharacterList.js", () =>
   jest.fn().mockReturnValue(null)
@@ -13,44 +16,65 @@ jest.mock("../components/Character/Skills.js", () =>
   jest.fn().mockReturnValue(null)
 );
 
-describe("SelectCharacterScreen test suite", () => {
-  beforeEach(() => jest.clearAllMocks());
+jest.mock("../components/Button/Button", () => jest.fn().mockReturnValue(null));
 
-  it("Should render correctly", () => {
+jest.mock("@react-navigation/native", () => ({
+  useNavigation: () => ({ goBack: mockNavigate }),
+  useRoute: jest.fn().mockImplementation(() => jest.fn()),
+}));
+
+jest.mock("../lib/context/selectCharacterContext", () => {
+  return {
+    useSelectCharacterContext: () => ({
+      userCharacter: {},
+      opponentCharacter: {},
+      setUserCharacter: () => null,
+      setOpponentCharacter: () => null,
+    }),
+  };
+});
+
+describe("SelectCharacterScreen test suite", () => {
+  it("Should display loading when character is not already loaded", () => {
     const { getByTestId } = render(<SelectCharacterScreen />);
-    expect(getByTestId("select-character-screen")).toBeTruthy();
+    expect(getByTestId("loading-select-character")).toBeTruthy();
   });
 
-  it("Should display character list", () => {
+  it("Should render correctly", async () => {
+    useRoute.mockImplementationOnce(() => ({ params: "opponent" }));
+    const { getByTestId } = render(<SelectCharacterScreen />);
+    await waitFor(() =>
+      expect(getByTestId("select-character-screen")).toBeTruthy()
+    );
+  });
+
+  it("Should display character list", async () => {
+    useRoute.mockImplementationOnce(() => ({ params: "opponent" }));
     CharacterList.mockReturnValue(<View testID="character-list" />);
     const { getByTestId } = render(<SelectCharacterScreen />);
-    expect(getByTestId("character-list")).toBeTruthy();
+    await waitFor(() => expect(getByTestId("character-list")).toBeTruthy());
   });
 
-  it("Should display character skills for the character selected", () => {
+  it("Should display character skills for the character selected", async () => {
+    useRoute.mockImplementationOnce(() => ({ params: "opponent" }));
     Skills.mockReturnValue(<View testID="skills" />);
     const { getByTestId } = render(<SelectCharacterScreen />);
-    expect(getByTestId("skills")).toBeTruthy();
+
+    await waitFor(() => expect(getByTestId("skills")).toBeTruthy());
   });
 
-  it("Should display button", () => {
+  it("Should display button", async () => {
+    useRoute.mockImplementationOnce(() => ({ params: "opponent" }));
+    Button.mockReturnValueOnce(<View testID="button" />);
     const { getByTestId } = render(<SelectCharacterScreen />);
-    expect(getByTestId("button")).toBeTruthy();
+
+    await waitFor(() => expect(getByTestId("button")).toBeTruthy());
   });
 
-  describe("Store", () => {
-    it("Should handle addCharacters action", async () => {
-      const interceptor = jest.fn();
-      const store = mockStore(interceptor);
-      render(<SelectCharacterScreen />, { store });
-
-      act(() => {
-        store.dispatch(addCharacter("mock-data"));
-      });
-
-      await waitFor(() =>
-        expect(interceptor).toHaveBeenCalledWith(addCharacter("mock-data"))
-      );
-    });
+  it("Should display back button when you choose a character from improve screen", async () => {
+    Button.mockReturnValueOnce(<View testID="back-button" />);
+    useRoute.mockImplementationOnce(() => ({ params: "opponent" }));
+    const { getByTestId } = render(<SelectCharacterScreen />);
+    await waitFor(() => expect(getByTestId("back-button")).toBeTruthy());
   });
 });
