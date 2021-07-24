@@ -10,8 +10,6 @@ import { Colors } from "../../lib/utils/colors";
 import Character from "./Character";
 
 const CharacterBlock = ({ character, onPress }) => {
-  console.log(character._id);
-  console.log(onPress);
   return (
     <TouchableOpacity onPress={() => onPress(character._id)}>
       <Character name={character.name} />
@@ -27,12 +25,13 @@ const Name = ({ name }) => {
   );
 };
 
-const List = ({ characters, onPress }) => {
+const List = ({ characters, onPress, direction }) => {
   return (
     <FlatList
       testID="characters"
       data={characters ?? {}}
-      horizontal={true}
+      horizontal={direction}
+      showsHorizontalScrollIndicator={false}
       renderItem={({ item }) => (
         <CharacterBlock character={item} onPress={onPress} />
       )}
@@ -41,10 +40,19 @@ const List = ({ characters, onPress }) => {
   );
 };
 
-const CharacterList = ({ characters, character, handleCharacter }) => {
+const CharacterList = ({
+  characters,
+  character,
+  handleCharacter,
+  direction,
+}) => {
   return (
     <View testID="character-list">
-      <List characters={characters} onPress={handleCharacter} />
+      <List
+        characters={characters}
+        onPress={handleCharacter}
+        direction={direction}
+      />
       <Name name={character.name} />
     </View>
   );
