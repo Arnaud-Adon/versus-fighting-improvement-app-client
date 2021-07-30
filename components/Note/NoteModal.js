@@ -14,6 +14,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "../../lib/utils/colors";
 import Button from "../Button/Button";
 import tagList from "../../lib/utils/constants/tags";
+import { addNote } from "../../lib/state/actions/index";
+import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -46,12 +49,17 @@ const NoteTags = ({ isVisible, tags, onPress, selected, ...others }) => {
 };
 
 const NoteModal = ({ isVisible, setModal, type = "new" }) => {
+  const dispatch = useDispatch();
   const [tags, setTags] = useState([]);
   const [noteText, setNoteText] = useState("");
   const isValid = Boolean(tags.length > 0 && !!noteText);
 
   const onNoteSubmit = () => {
-    console.log("noteText", noteText);
+    const data = {
+      text: noteText,
+      tags,
+    };
+    dispatch(addNote(data));
   };
 
   const closeModal = () => {
@@ -150,6 +158,11 @@ const NoteModal = ({ isVisible, setModal, type = "new" }) => {
       </View>
     )
   );
+};
+
+NoteModal.propTypes = {
+  isVisible: PropTypes.bool.isRequired,
+  setModal: PropTypes.func.isRequired,
 };
 
 export default NoteModal;
