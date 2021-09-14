@@ -1,8 +1,12 @@
 import React from "react";
 import { render } from "@testing-library/react-native";
 import OpponentNote from "./OpponentNote";
+import { useDispatch } from "react-redux";
 
 jest.mock("react-native/Libraries/LayoutAnimation/LayoutAnimation");
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn().mockReturnValue(null),
+}));
 
 describe("OpponentNote test suite", () => {
   it("Should render correctly", () => {
