@@ -5,6 +5,7 @@ import useSetting from "./lib/hooks/useSetting";
 import Loading from "./components/Loading/Loading";
 import AppNavigator from "./navigation/AppNavigator";
 import { fetchCharacters } from "./lib/state/actions";
+import { SelectCharacterProvider } from "./lib/context/selectCharacterContext";
 
 export default function App() {
   const { loading, loadConfiguration } = useSetting();
@@ -19,7 +20,9 @@ export default function App() {
   } else {
     return (
       <Provider store={store}>
-        <AppNavigator />
+        <SelectCharacterProvider>
+          <AppNavigator />
+        </SelectCharacterProvider>
       </Provider>
     );
   }
