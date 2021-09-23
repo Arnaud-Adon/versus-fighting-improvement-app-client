@@ -18,31 +18,31 @@ describe("SigninForm test suite", () => {
   it("Should display input label", () => {
     const { getByTestId, getByText } = render(<SigninForm />);
     const container = getByTestId("signin-form");
-    const usernameLabel = getByText(/Pseudo/);
+    const emailLabel = getByText(/Email/);
     const passwordLabel = getByText(/Mot de passe/);
-    expect(container).toContainElement(usernameLabel);
+    expect(container).toContainElement(emailLabel);
     expect(container).toContainElement(passwordLabel);
   });
 
   it("Should display a button disabled when one field is complete ", () => {
     const { getByTestId } = render(<SigninForm />);
-    const field = getByTestId("username");
-    fireEvent.changeText(field, "mock-username");
+    const field = getByTestId("email");
+    fireEvent.changeText(field, "mock-email");
     expect(getByTestId("submit")).toBeDisabled();
   });
 
   it("Should display a button enabled when all field in complete", () => {
     const { getByTestId } = render(<SigninForm />);
-    const username = getByTestId("username");
+    const email = getByTestId("email");
     const password = getByTestId("password");
-    fireEvent.changeText(username, "mock-username");
+    fireEvent.changeText(email, "email@mock.com");
     fireEvent.changeText(password, "mock-password");
     expect(getByTestId("submit")).not.toBeDisabled();
   });
 
   describe("Store/signIn", () => {
     const mockUserData = {
-      username: "mock-username",
+      email: "mock-email",
       password: "mock-password",
     };
     it("Should signIn user", async () => {

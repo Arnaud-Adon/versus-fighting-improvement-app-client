@@ -17,7 +17,7 @@ import Button from "../Button/Button";
 import { Status } from "../../lib/utils/types/status";
 
 const defaultValues = {
-  username: "",
+  email: "",
   password: "",
 };
 
@@ -59,10 +59,10 @@ const SigninForm = ({ signIn, status, error }) => {
   return (
     <View testID="signin-form" style={styles.container}>
       <View>
-        <Text style={styles.label}>Pseudo:</Text>
+        <Text style={styles.label}>Email:</Text>
         <Input
-          testID="username"
-          onChangeText={() => handleChange("username")}
+          testID="email"
+          onChangeText={() => handleChange("email")}
           style={styles.input}
         />
       </View>
