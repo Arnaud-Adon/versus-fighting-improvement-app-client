@@ -10,7 +10,8 @@ import {
   width,
 } from './index.styles';
 
-import Button from '../../components/Button';
+// import Button from '../../components/Button';
+import Button from 'src/components/Button';
 import { COLORS } from '../../constants';
 import type { ScreenProps } from '../../types/navigation';
 

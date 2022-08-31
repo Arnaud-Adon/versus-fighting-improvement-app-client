@@ -7,7 +7,9 @@ import { Text, View } from 'react-native';
 export default function App(): ReactElement {
   const { isLoading, loadConfiguration, isTokenExist } = useConfiguration();
 
-  useEffect(() => loadConfiguration(), []);
+  useEffect(() => {
+    loadConfiguration();
+  }, []);
 
   const isUserConnected = isTokenExist();
 
